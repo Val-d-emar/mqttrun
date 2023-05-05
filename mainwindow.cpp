@@ -6,6 +6,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , strList(new QStringList)
 {
     ui->setupUi(this);
     mqtt_cli = new QMqttClient(this);
@@ -22,7 +23,6 @@ MainWindow::MainWindow(QWidget *parent)
     });
     // устанавливаем обработчик изменения состояния подключения к MQTT-брокеру
     connect(mqtt_cli, &QMqttClient::stateChanged, this, &MainWindow::stateChanged);
-
 }
 void MainWindow::resizeEvent(QResizeEvent *event){
     if (event->size().width() > ui->log->geometry().left() + ui->log->width()){
@@ -111,16 +111,16 @@ void MainWindow::on_pushButton_RUN_clicked()
                                  + tr("\" не найден\n"));
     }else{
         // создаем объект QFile и открываем файл для чтения
-        r_file = new QFile(ui->lineEdit_filepath->text());
-        if (!r_file->open(QIODevice::ReadOnly | QIODevice::Text))
+        QFile r_file(ui->lineEdit_filepath->text());
+        if (!r_file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
             ui->log->insertPlainText(tr("Ошибка открытия файла \"")
                                      + ui->lineEdit_filepath->text()
                                      + tr("\"\n"));
         } else {
             ui->pushButton_RUN->setDisabled(true);
-            QTextStream in(r_file);
-            strList = new QStringList ;
+            QTextStream in(&r_file);
+            strList->clear()  ;
             // считываем содержимое файла
             while (!in.atEnd()) {
                 QString line = in.readLine();
@@ -139,8 +139,6 @@ void MainWindow::on_pushButton_RUN_clicked()
                     mqtt_cli->disconnectFromHost();
                     ui->pushButton_RUN->setEnabled(true);
                 }
-
-
         }
     }
 }

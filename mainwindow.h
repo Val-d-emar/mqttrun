@@ -24,7 +24,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QMqttClient *mqtt_cli;
-    QFile *r_file;
     QStringList *strList;
     void stateChanged();
     void subStateChanged();
