@@ -177,7 +177,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>/home/all/test.txt</string>
+        <string/>
        </property>
       </widget>
      </item>
